@@ -1,0 +1,182 @@
+---
+title: "Activity 10"
+author: "Domenic Cabibbo"
+format: html
+editor: visual
+self-contained: true
+---
+
+```{r}
+#| warning: false
+library(ggplot2)
+library(tidyverse)
+library(dcData)
+library(knitr)
+
+
+tortilla_data <- read.csv("tortilla_data.csv")
+
+
+```
+
+## Question 1
+
+```{r}
+#| echo: false
+
+myFunction <- function(x){
+  y <- (cos(4*x) + tan(0.5*x))^4
+  return(y)
+}
+
+ggplot() +
+  stat_function(
+    fun = myFunction,
+    xlim = c(0, 1),
+    n = 1000
+  ) +
+  theme_bw() +
+  labs(
+    x = "x",
+    y = "h(x)"
+  )
+```
+
+## Question 2
+
+```{r}
+#| warning: false
+#Graph from Activity 9
+names_improved <- BabyNames %>%
+group_by(name, year) %>%
+summarise(total_count = sum(count)) %>%
+ungroup() %>% filter(name %in% c("Mary", "Marie","Laura","Eddie"))
+
+
+ggplot(names_improved, aes(x = year, y = total_count, color = name, linetype = name ,group = name)) +
+geom_line() +
+labs(title = "Popularity of Names Over Time", x = "Year", y = "Total Number of Babies") +
+theme_minimal()
+```
+
+## Question 3
+
+Using data from tortilla_data.csv [^1]
+
+[^1]: Taken from Rick Chavelas's Kaggle found at <https://www.kaggle.com/datasets/richave/tortilla-prices-in-mexico>
+
+### Part a)
+
+a)  For the year 2007, find the average price of tortillas across all of these 6 states together.
+
+```{r}
+
+tortilla_2007 <- tortilla_data %>% filter(year == 2007) %>%
+  summarise(avg_price_2007 = mean(price))
+
+print(tortilla_2007)
+```
+
+### Part b)
+
+b)  For the year 2024, find the average price of tortillas across all of these 6 states together.
+
+```{r}
+tortilla_2024 <- tortilla_data %>% filter(year == 2024) %>% summarise(avg_price_2024 = mean(price))
+
+print(tortilla_2024)
+```
+
+### Part c)
+
+c)  Find the percent change in the average price of tortillas across all six states together from the year 2007 to 2024.
+
+```{r}
+#grabbing both averages again
+average <- tortilla_data %>%
+  filter(year %in% c(2007, 2024)) %>%
+  group_by(year) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+avg_2007 <- average %>% filter(year == 2007) %>% pull(avg_price)
+avg_2024 <- average %>% filter(year == 2024) %>% pull(avg_price)
+
+change <- (avg_2024 - avg_2007) / avg_2007 * 100
+
+print(change)
+```
+
+### Part d)
+
+Make a plot that shows the average price of tortillas (across all six states together) each year from the years 2007 to 2024. Add an appropriate title for this figure using Quarto.
+
+```{r}
+#get all averages
+average_per_year <- tortilla_data %>%
+  group_by(year) %>%
+  summarise(avg_price = mean(price, na.rm = TRUE))
+
+#plot
+ggplot(average_per_year, aes(x = year, y = avg_price)) +
+  geom_line() + geom_point() +
+  labs(title = "Average Tortilla Chip Price Per Year",
+       x = "Year",
+       y = "Avg Price in USD") +
+  theme_minimal()
+```
+
+### Part e)
+
+For the year 2016, provide summary statistics for each of the six states’ price of tortillas. Make a table of the average price of tortillas in each state in 2016. Add a title for this table using Quarto. Also make side-by-side boxplots for each state in 2016. Add an appropriate title and caption for this figure using Quarto.
+
+```{r}
+#get 2016 data
+tortilla_2016 <- tortilla_data %>% filter(year == 2016)
+
+#group by state and get the average
+states_2016 <- tortilla_2016 %>% group_by(state) %>%
+  summarise(avg = mean(price))
+
+kable(states_2016, caption = "Table: Summary Statistics of Tortilla Prices in 2016 by State")
+  
+```
+
+```{r}
+#Plot the Data
+
+ggplot(tortilla_2016, 
+       aes(x = state, y = price, fill = state)) + 
+    geom_boxplot() + labs( title = "Tortilla Prices by State in 2016",
+    x = "State",
+    y = "Price in USD",
+    caption = "Boxplots showing the distribution of tortilla prices in 2016 for each state.")
+```
+
+### Part f)
+
+For the state of Nuevo León, make an overlapping plot of the price of tortillas each year from 2007 to 2024 based on store type (i.e., small businesses vs. large corporations). Comment on your findings. Add an appropriate title and caption for this figure using Quarto.
+
+```{r}
+#get nuevo data
+nuevo_data <- tortilla_data %>%
+  filter(state == "NuevoLeon" & year %in% 2007:2024)
+
+#plot
+
+ggplot(nuevo_data, aes(x = year, y = price, color = storeType)) + geom_line() + geom_point() + labs(
+  title = "Nuevo León Tortilla Price Trends by Store Type",
+  x = "Year",
+  y = "Price in USD",
+  caption = "This plot shows the trend of price for tortillas in Nuevo from 2007 to 2024"
+)
+
+
+```
+
+From the data we can infer that big retailers sell Tortillas on average cheaper then regular mom and pop shops.
+
+### Part g)
+
+Include a picture of a tortilla. Add a caption in which you cite the source from which the picture originated.
+
+![Image was taken from [here](https://www.flickr.com/photos/logatfer/14374986878/)](C:/Users/Domen/Documents/Activity%2010/tortilla.jpg)

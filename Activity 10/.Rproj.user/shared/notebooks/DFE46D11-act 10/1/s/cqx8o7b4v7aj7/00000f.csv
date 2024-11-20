@@ -1,0 +1,8 @@
+"0","#Plot the Data"
+"0",""
+"0","ggplot(tortilla_2016, "
+"0","       aes(x = state, y = price, fill = state)) + "
+"0","    geom_boxplot() + labs( title = ""Tortilla Prices by State in 2016"","
+"0","    x = ""State"","
+"0","    y = ""Price in USD"","
+"0","    caption = ""Boxplots showing the distribution of tortilla prices in 2016 for each state."")"

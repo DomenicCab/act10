@@ -1,0 +1,5 @@
+"0",""
+"0","tortilla_2007 <- tortilla_data %>% filter(year == 2007) %>%"
+"0","  summarise(avg_price_2007 = mean(price))"
+"0",""
+"0","print(tortilla_2007)"

@@ -1,0 +1,8 @@
+"0","#get 2016 data"
+"0","tortilla_2016 <- tortilla_data %>% filter(year == 2016)"
+"0",""
+"0","#group by state and get the average"
+"0","states_2016 <- tortilla_2016 %>% group_by(state) %>%"
+"0","  summarise(avg = mean(price))"
+"0",""
+"0","kable(states_2016, caption = ""Table: Summary Statistics of Tortilla Prices in 2016 by State"")"
